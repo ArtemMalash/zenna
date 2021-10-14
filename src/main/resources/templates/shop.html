@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Zenna | Shop Catalog</title>
+
+  <meta charset="utf-8">
+  <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="">
+  
+  <!-- Google Fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700%7COpen+Sans:400,400i,600,700' rel='stylesheet'>
+
+  <!-- Css -->
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/magnific-popup.css" />
+  <link rel="stylesheet" href="css/font-icons.css" />
+  <link rel="stylesheet" href="css/sliders.css" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Favicons -->
+  <link rel="shortcut icon" href="img/favicon.ico">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="img/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="img/apple-touch-icon-114x114.png">
+
+</head>
+
+<body class="relative">
+
+  <!-- Preloader -->
+  <div class="loader-mask">
+    <div class="loader">
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+
+  <main class="main-wrapper">
+
+    <header class="nav-type-1">
+      <!-- Fullscreen search -->
+      <div class="search-wrap">
+        <div class="search-inner">
+          <div class="search-cell">
+            <form method="get">
+              <div class="search-field-holder">
+                <input type="search" class="form-control main-search-input" placeholder="Search for">
+                <i class="ui-close search-close" id="search-close"></i>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div> <!-- end fullscreen search -->
+
+      <!-- Top Bar -->
+      <div class="top-bar hidden-xs">
+        <div class="container">
+          <div class="top-bar-links flex-parent">
+            <ul class="top-bar-currency-language">
+            </ul>
+
+            <ul class="top-bar-acc" sec:authorize="!isAuthenticated()">
+              <li class="top-bar-link"><a th:href="@{login}">Login</a></li>
+            </ul>
+
+            <ul class="top-bar-acc" sec:authorize="isAuthenticated()">
+              <li class="top-bar-link"><a href="javascript: document.logoutForm.submit()">Logout</a>
+                <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                  <input hidden type="submit" value="Sign Out"/>
+                </form>
+              </li>
+
+              <li class="top-bar-link" sec:authorize="hasRole('MANAGER')">
+                <a th:href="@{/newProduct}">Create new product</a>
+              </li>
+
+              <li class="top-bar-link" sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/userManagement}">User management</a>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+      </div> <!-- end top bar -->
+
+      <nav class="navbar navbar-static-top">
+        <div class="navigation" id="sticky-nav">
+          <div class="container relative">
+
+            <div class="row flex-parent">
+
+              <div class="navbar-header flex-child">
+                <!-- Logo -->
+                <div class="logo-container">
+                  <div class="logo-wrap">
+                    <a th:href="@{/}">
+                      <img class="logo-dark" src="img/logo_dark.png" alt="logo">
+                    </a>
+                  </div>
+                </div>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <!-- Mobile cart -->
+                <div class="nav-cart mobile-cart hidden-lg hidden-md">
+                  <div class="nav-cart-outer">
+                    <div class="nav-cart-inner">
+                      <a href="#" class="nav-cart-icon">
+                        <span class="nav-cart-badge">2</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div> <!-- end navbar-header -->
+
+              <div class="nav-wrap flex-child">
+                <div class="collapse navbar-collapse text-center" id="navbar-collapse">
+
+                  <ul class="nav navbar-nav">
+
+                    <li>
+                      <a th:href="@{/}">Home</a>
+                      <i class="fa"></i>
+                    </li>
+
+                    <li class="dropdown">
+                      <a th:href="@{/shop}">Shop</a>
+                      <i class="fa fa-angle-down dropdown-trigger"></i>
+                      <ul class="dropdown-menu megamenu-wide">
+                        <li>
+                          <div class="megamenu-wrap container">
+                            <div class="row">
+
+                              <div class="col-md-3 megamenu-item" th:each="i  : ${listCategory}">
+
+                                <ul class="menu-list">
+                                  <li>
+                                    <span th:text="${i.getCategory_name()}"></span>
+                                  </li>
+                                  <li th:each="subcategory : ${listSubcategory}"><a th:if="${subcategory.getCategory().getCategory_name() == i.getCategory_name()}" th:href="@{/shop}"  th:text="${subcategory.getSubcategory_name()}"></a></li>
+                                </ul>
+
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </li>
+
+                    <li>
+                      <a th:href="@{/about}">About</a>
+                      <i class="fa"></i>
+                    </li> <!-- end elements -->
+
+                    <li class="mobile-links hidden-lg hidden-md">
+                      <a href="#">My Account</a>
+                    </li>
+
+                    <!-- Mobile search -->
+                    <li id="mobile-search" class="hidden-lg hidden-md">
+                      <form method="get" class="mobile-search">
+                        <input type="search" class="form-control" placeholder="Search...">
+                        <button type="submit" class="search-button">
+                          <i class="fa fa-search"></i>
+                        </button>
+                      </form>
+                    </li>
+
+                  </ul> <!-- end menu -->
+                </div> <!-- end collapse -->
+              </div> <!-- end col -->
+
+              <div class="flex-child flex-right nav-right hidden-sm hidden-xs">
+                <ul>
+                  <li class="nav-cart" sec:authorize="isAuthenticated()">
+                    <div class="nav-cart-outer">
+                      <div class="nav-cart-inner">
+                        <a href="#" class="nav-cart-icon">
+                          0
+                        </a>
+                      </div>
+                    </div>
+                    <div class="nav-cart-container">
+                      <div class="nav-cart-items">
+
+                        <div class="nav-cart-item clearfix">
+                          <div class="nav-cart-img">
+                            <a href="#">
+                              <img src="img/shop/shop_item_1.jpg" alt="">
+                            </a>
+                          </div>
+                          <div class="nav-cart-title">
+                            <a href="#">
+                              Ladies Bag
+                            </a>
+                            <div class="nav-cart-price">
+                              <span>1 x</span>
+                              <span>1250.00</span>
+                            </div>
+                          </div>
+                          <div class="nav-cart-remove">
+                            <a href="#" class="remove"><i class="ui-close"></i></a>
+                          </div>
+                        </div>
+
+                        <div class="nav-cart-item clearfix">
+                          <div class="nav-cart-img">
+                            <a href="#">
+                              <img src="img/shop/shop_item_2.jpg" alt="">
+                            </a>
+                          </div>
+                          <div class="nav-cart-title">
+                            <a href="#">
+                              Sequin Suit longer title
+                            </a>
+                            <div class="nav-cart-price">
+                              <span>1 x</span>
+                              <span>1250.00</span>
+                            </div>
+                          </div>
+                          <div class="nav-cart-remove">
+                            <a href="#" class="remove"><i class="ui-close"></i></a>
+                          </div>
+                        </div>
+
+                      </div> <!-- end cart items -->
+
+                      <div class="nav-cart-summary">
+                        <span>Cart Subtotal</span>
+                        <span class="total-price">$1799.00</span>
+                      </div>
+
+                      <div class="nav-cart-actions mt-20">
+                        <a href="shop-cart.html" class="btn btn-md btn-dark"><span>View Cart</span></a>
+                        <a href="shop-checkout.html" class="btn btn-md btn-color mt-10"><span>Proceed to Checkout</span></a>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+            </div> <!-- end row -->
+          </div> <!-- end container -->
+        </div> <!-- end navigation -->
+      </nav> <!-- end navbar -->
+    </header>
+
+    <div class="content-wrapper oh">
+
+      <!-- Catalogue -->
+      <section class="section-wrap pt-80 pb-40 catalogue">
+        <div class="container relative">
+
+          <!-- Filter -->
+          <div class="shop-filter">
+            <div class="view-mode hidden-xs">
+              <span>View:</span>
+              <a class="grid grid-active" id="grid"></a>
+              <a class="list" id="list"></a>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 catalogue-col right mb-50">
+              <div class="shop-catalogue grid-view">
+
+                <div class="row items-grid">
+
+                  <div class="col-md-4 col-xs-6 product product-grid" th:each="product : ${listProduct}">
+                    <div class="product-item clearfix">
+                      <div class="product-img hover-trigger">
+                        <a href="#">
+                          <img th:if="${product.getImage() != null}" th:src="@{'/productImage/' + ${product.getId()}}" alt="">
+                          <img th:if="${product.getImage() == null}" src="img/shop/shop_item_4.jpg" alt="">
+                        </a>
+                        <div sec:authorize="hasRole('MANAGER')" class="hover-2">
+                          <div class="product-actions">
+                            <a th:href="@{'/deleteProduct/' + ${product.getId()}}" class="product-add-to-wishlist">
+                              <i class="fa fa-trash"></i>
+                            </a>
+                            <a th:href="@{'/editProduct/' + ${product.getId()}}" class="product-add-to-wishlist">
+                              <i class="fa fa-edit"></i>
+                            </a>
+                          </div>                        
+                        </div>
+                        <a href="#" class="product-quickview">Add to basket</a>
+                      </div>
+
+                      <div class="product-details">
+                        <h3 class="product-title">
+                          <a href="#" th:text="${product.getProduct_name()}"></a>
+                        </h3>
+                        <span class="category">
+                          <a href="#" th:text="${product.getSubcategory().getSubcategory_name()}"></a>
+                        </span>
+                      </div>
+
+                      <span class="price">
+                        <ins>
+                          <span class="amount" th:text="'$' + ${product.getPrice()}"></span>
+                        </ins>                        
+                      </span>
+
+                      <div class="product-description">
+                        <h3 class="product-title">
+                          <a href="#" th:text="${product.getProduct_name()}"></a>
+                        </h3>
+                        <span class="price">
+                          <ins>
+                            <span class="amount" th:text="'$' + ${product.getPrice()}"></span>
+                          </ins>                        
+                        </span>
+                        <div class="clear"></div>
+                        <p th:text="'Brand: ' + ${product.getBrand()} + ' Color: ' + ${product.getColor()} + ' Material: ' + ${product.getMaterial()}"></p>
+                        <a href="#" class="btn btn-dark btn-md left"><span>Add to Basket</span></a>
+                        <div sec:authorize="hasRole('MANAGER')">
+                          <div class="product-add-to-wishlist">
+                            <a th:href="@{'/deleteProduct/' + ${product.getId()}}"><i class="fa fa-trash"></i></a>
+                          </div>
+                          <div class="product-add-to-wishlist">
+                            <a th:href="@{'/editProduct/' + ${product.getId()}}"><i class="fa fa-edit"></i></a>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div> <!-- end product -->
+
+                </div> <!-- end row -->
+              </div> <!-- end grid mode -->
+
+            </div> <!-- end col -->
+
+          </div> <!-- end row -->
+        </div> <!-- end container -->
+      </section> <!-- end catalog -->
+
+
+      <!-- Footer Type-1 -->
+      <footer class="footer footer-type-1">
+
+        <div class="bottom-footer">
+          <div class="container">
+            <div class="row">
+
+              <div class="col-sm-6 copyright sm-text-center">
+                <span>
+                  &copy; 2021 Zenna Theme, Made by <a href="http://deothemes.com">Artem Malash</a>
+                </span>
+              </div>
+
+              <div class="col-sm-6 col-xs-12 footer-payment-systems text-right sm-text-center mt-sml-10">
+                <i class="fa fa-cc-paypal"></i>
+                <i class="fa fa-cc-visa"></i>
+                <i class="fa fa-cc-mastercard"></i>
+                <i class="fa fa-cc-discover"></i>
+                <i class="fa fa-cc-amex"></i>
+              </div>
+
+            </div>
+          </div>
+        </div> <!-- end bottom footer -->
+      </footer> <!-- end footer -->
+
+      <div id="back-to-top">
+        <a href="#top"><i class="fa fa-angle-up"></i></a>
+      </div>
+
+    </div> <!-- end content wrapper -->
+  </main> <!-- end main wrapper -->
+
+  <!-- jQuery Scripts -->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/plugins.js"></script>  
+  <script type="text/javascript" src="js/scripts.js"></script>
+    
+</body>
+</html>
